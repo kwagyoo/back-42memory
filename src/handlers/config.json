@@ -1,0 +1,8 @@
+{
+  "user": {
+    "host": "~",
+    "user": "admin",
+    "password": "memory42db",
+    "database": "memory42"
+  }
+}

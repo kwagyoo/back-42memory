@@ -1,0 +1,169 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Environment:
+    Type: String
+  AppId:
+    Type: String
+
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'content-type,Authorization'"
+      AllowOrigin: "'*'"
+      AllowCredentials: false
+
+Resources:
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: Login
+      CodeUri: ./
+      Handler: src/handlers/LoginHandler.Login
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: GET
+            RestApiId: !Ref API
+  RegisterUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: RegisterUser
+      CodeUri: ./
+      Handler: src/handlers/RegisterUserHandler.RegisterUser
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: POST
+            RestApiId: !Ref API
+  GetSimpleMessageInfoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetSimpleMessageInfo
+      CodeUri: ./
+      Handler: src/handlers/GetSimpleMessageInfoHandler.GetSimpleMessageInfo
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /user/{userID}/message/simple
+            Method: GET
+            RestApiId: !Ref API
+  GetDetailMessageInfoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetDetailMessageInfo
+      CodeUri: ./
+      Handler: src/handlers/GetDetailMessageInfoHandler.GetDetailMessageInfo
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /user/{userID}/message
+            Method: GET
+            RestApiId: !Ref API
+  SendMessageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SendMessage
+      CodeUri: ./
+      Handler: src/handlers/SendMessageHandler.SendMessage
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /user/{userID}/message
+            Method: POST
+            RestApiId: !Ref API
+  GetClusterNameFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetClusterName
+      CodeUri: ./
+      Handler: src/handlers/GetClusterNameHandler.GetClusterName
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /user/{userID}/name
+            Method: GET
+            RestApiId: !Ref API
+  ResetPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ResetPassword
+      CodeUri: ./
+      Handler: src/handlers/ResetPasswordHandler.ResetPassword
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /user/{userID}/password
+            Method: POST
+            RestApiId: !Ref API
+  API:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Sub ${Environment}
