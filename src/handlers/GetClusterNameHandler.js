@@ -14,6 +14,7 @@ exports.GetClusterName = async (event, context) => {
       connectionLimit: 150,
     });
     const userClusterName = await conn.query("select userClusterName from UsernameTable where userID = ?", [userID]);
+    conn.end();
 
     return {
       statusCode: 200,

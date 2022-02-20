@@ -1,12 +1,9 @@
 const mysql = require("promise-mysql");
 const config = require("./config.json");
-const jwt = require("jsonwebtoken");
 
-exports.GetDetailMessageInfo = async (event, context) => {
+exports.GetReceiverData = async (event, context) => {
   try {
-    console.log(event);
     const { userID } = event.pathParameters;
-    const accessToken = event.headers.Authorization.split(" ")[1];
 
     const conn = await mysql.createConnection({
       host: config.user.host,
@@ -15,28 +12,23 @@ exports.GetDetailMessageInfo = async (event, context) => {
       database: config.user.database,
       connectionLimit: 150,
     });
-    if (!jwt.verify(accessToken, "42memory-secret")) throw new Error("Unauthorized");
-    let messages;
-    try {
-      messages = await conn.query(
-        "select mT.messageID, mT.senderNickname, mT.messageTitle, mT.messageText from MessageTable as mT join UserTable as uT on mT.userID = uT.userID where mT.userID = ? and uT.userDeadline <= CURDATE()",
-        [userID]
-      );
-      conn.end();
-    } catch (error) {
-      conn.end();
-      throw new Error(err.errorMessage);
-    }
+    const userData = await conn.query(
+      "select unT.userClusterName, uT.userDeadline from UsernameTable as unT join UserTable as uT on unT.userID = uT.userID where unT.userID = ?",
+      [userID]
+    );
+    conn.end();
+
+    if (userData[0].userDeadline < new Date(Date.now())) throw new Error("ExpiredLinkDate");
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ messages: messages }),
+      body: JSON.stringify({ userClusterName: userData[0].userClusterName }),
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error.response) {
       return {
         statusCode: error.response.status,
@@ -59,7 +51,7 @@ exports.GetDetailMessageInfo = async (event, context) => {
       // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
       return {
         statusCode: 500,
-        body: JSON.stringify({ errorMessage: error.message }),
+        body: JSON.stringify({ errorMessage: error }),
         headers: {
           "Access-Control-Allow-Origin": "*",
         },

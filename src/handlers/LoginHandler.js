@@ -20,7 +20,7 @@ exports.Login = async (event, context) => {
     let userResponse;
     try {
       userResponse = await mysqlPool.query(
-        "select unT.userID, unT.userClusterName, uT.userPassword from  UserTable as uT Join UsernameTable as unT on uT.userID = unT.userID where unT.userClusterName = ?",
+        "select unT.userID, unT.userClusterName, uT.userPassword, uT.userDeadline from  UserTable as uT Join UsernameTable as unT on uT.userID = unT.userID where unT.userClusterName = ?",
         [userClusterName]
       );
       mysqlPool.end();
@@ -48,6 +48,7 @@ exports.Login = async (event, context) => {
       body: JSON.stringify({
         userID: userResponse[0].userID,
         userClusterName: userResponse[0].userClusterName,
+        userDeadline: userResponse[0].userDeadline,
         accessToken: accessToken,
       }),
       headers: {

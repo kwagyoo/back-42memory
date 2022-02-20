@@ -7,7 +7,6 @@ const saltRounds = 10;
 
 exports.ResetPassword = async (event, context) => {
   try {
-    const { userClusterName } = event.pathParameters;
     const { userEmail } = JSON.parse(event.body);
 
     const conn = await mysql.createConnection({
@@ -18,12 +17,9 @@ exports.ResetPassword = async (event, context) => {
       connectionLimit: 150,
     });
 
-    const userInfo = await conn.query(
-      "select uT.userID, uT.userEmail from UserTable as uT join UsernameTable as unT on uT.userID = unT.userID where unT.userClusterName = ?",
-      [userClusterName]
-    );
+    const userInfo = await conn.query("select userID, userEmail from UserTable where userEmail = ?", [userEmail]);
     console.log(userInfo);
-    if (!userInfo.length || userInfo[0].userEmail !== userEmail) throw new Error("MismatchedUserInfo");
+    if (!userInfo.length) throw new Error("MismatchedUserInfo");
 
     const randomPassword = Math.random().toString(16).slice(2);
 

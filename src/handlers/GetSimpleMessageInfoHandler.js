@@ -23,10 +23,12 @@ exports.GetSimpleMessageInfo = async (event, context) => {
         "select mT.senderNickname, mT.messageID from MessageTable as mT where mT.userID = ?",
         [userID]
       );
+      conn.end();
     } catch (error) {
-      mysqlPool.end();
+      conn.end();
       throw new Error(err.errorMessage);
     }
+
     return {
       statusCode: 200,
       body: JSON.stringify({ messages: simpleMessages }),

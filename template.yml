@@ -142,6 +142,48 @@ Resources:
             Path: /user/{userID}/name
             Method: GET
             RestApiId: !Ref API
+  GetReceiverDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetReceiverData
+      CodeUri: ./
+      Handler: src/handlers/GetReceiverDataHandler.GetReceiverData
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /user/{userID}/message/name
+            Method: GET
+            RestApiId: !Ref API
+  GetFourtyTwoDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetFourtyTwoData
+      CodeUri: ./
+      Handler: src/handlers/GetFourtyTwoDataHandler.GetFourtyTwoData
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /user/info
+            Method: GET
+            RestApiId: !Ref API
   ResetPasswordFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -160,7 +202,7 @@ Resources:
         HelloWorld:
           Type: Api
           Properties:
-            Path: /user/{userID}/password
+            Path: /user/password
             Method: POST
             RestApiId: !Ref API
   API:

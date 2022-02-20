@@ -35,7 +35,11 @@ exports.RegisterUser = async (event, context) => {
       const encryptedPassword = bcrypt.hashSync(userPassword, saltRounds);
 
       await conn.beginTransaction(); // 트랜잭션 적용 시작
-      await conn.query("insert into UserTable values (?,?,?,?)", [userID, encryptedPassword, userDeadline, userEmail]);
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      await conn.query("insert into UserTable values (?,?,?,?)", [userID, encryptedPassword, tomorrow, userEmail]);
+      //await conn.query("insert into UserTable values (?,?,?,?)", [userID, encryptedPassword, userDeadline, userEmail]);
       await conn.query("insert into UsernameTable values (?,?)", [userID, userClusterName]);
 
       await conn.commit();
